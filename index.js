@@ -12,7 +12,7 @@ var server = ws.createServer(function (conn) {
     conn.on("error", function (code, reason) {
         console.log("关闭连接")
     });
-}).listen(9999)
+}).listen(8888)
 console.log("服务启动成功")
 
 String.prototype.endWith = function (endStr) {

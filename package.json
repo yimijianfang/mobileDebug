@@ -1,20 +1,20 @@
 {
-  "name": "logwatcher",
+  "name": "mobileDebug",
   "version": "1.0.0",
-  "description": "1. 开启node服务\r ```\r node server.js\r ```\r 2. 打开phone.html和pc.html文件就可以啦",
-  "main": "server.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yimijianfang/logWatcher.git"
+    "url": "git+https://github.com/yimijianfang/mobileDebug.git"
   },
   "author": "liuning",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/yimijianfang/logWatcher/issues"
+    "url": "https://github.com/yimijianfang/mobileDebug/issues"
   },
-  "homepage": "https://github.com/yimijianfang/logWatcher#readme"
+  "homepage": "https://github.com/yimijianfang/mobileDebug#readme"
 }

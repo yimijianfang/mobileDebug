@@ -259,7 +259,7 @@
     <div class="notification sticky hide">
         <p id="content"> </p>
         <a class="close" href="javascript:">
-            <img src="/icon-close.png" />
+            <img src="./icon-close.png" />
         </a>
     </div>
 
@@ -272,14 +272,14 @@
                     <span class="connected"></span>
                     <span class="tag" id="device_os"></span>
                     <span class="tag" id="device_explore"></span>
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
                     <div>
                         <textarea id="command" class="el-textarea" placeholder="使用Ctrl+Enter快捷发送指令"></textarea>
                         <!-- <input id='sendcommand' class="el-button" type="button" name="" value="发送指令"> -->
                     </div>
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
                     <input id="start" type="button" class="el-button" name="" value="暂停">
                     <input id="clearall" type="button" class="el-button" name="" value="清空">
                     <input type="button" class="el-button" name="" value="全部折叠" onclick="zhedie(this)">
@@ -375,7 +375,7 @@
             return result[1];
         }
         var tmpInterval, ws;
-        var url = "ws://localhost:8888";
+        var url = "ws://118.89.232.241:8888";
         $(document).ready(function () {
             new socket(url)
         });
