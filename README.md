@@ -47,3 +47,7 @@
 	设置PC端socket地址。
 	/nodepush/index.html:378附近
 	```
+####可能出现的问题
+- node index.js后服务已开启，但移动端不能连接
+	1. 查看防火墙
+	2. 查看js路径
