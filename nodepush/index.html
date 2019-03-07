@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <link href="./main.css" rel="stylesheet" type="text/css" />
+    <script src='https://cdn.bootcss.com/socket.io/2.0.3/socket.io.js'></script>
+    <script src='https://cdn.bootcss.com/jquery/1.11.3/jquery.js'></script>
+    <link href="./css/jquery.json-viewer.css" type="text/css" rel="stylesheet" />
+    <script src="./js/jquery.json-viewer.js"></script>
+    <script src="./js/html2canvas.min.js"></script>
+    <script src='./notify.js'></script>
+    <title>MobileDebug-移动端调试工具</title>
+    <style type="text/css">
+        #apiurl {
+            -webkit-appearance: none;
+            background-color: #fff;
+            background-image: none;
+            border-radius: 4px;
+            border: 1px solid #dcdfe6;
+            box-sizing: border-box;
+            color: #606266;
+            display: inline-block;
+            font-size: inherit;
+            height: 30px;
+            line-height: 30px;
+            outline: none;
+            padding: 0 10px;
+        }
+
+        #apiurl::-webkit-input-placeholder {
+            color: #dcdfe6
+        }
+
+        #apiurl:focus {
+            border: 1px solid #409EFF;
+        }
+
+        .el-button {
+            display: inline-block;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            background: #fff;
+            border: 1px solid #dcdfe6;
+            border-color: #dcdfe6;
+            color: #606266;
+            -webkit-appearance: none;
+            text-align: center;
+            box-sizing: border-box;
+            outline: none;
+            margin: 0;
+            transition: .1s;
+            font-weight: 500;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            padding: 7px 20px;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+
+        .el-textarea {
+            display: inline-block;
+            resize: vertical;
+            padding: 5px 15px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            width: 100%;
+            font-size: inherit;
+            color: #606266;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+            min-height: 40px;
+            height: 100px;
+            width: 500px;
+        }
+
+        .jsons_url {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+    <style>
+        .jsons {
+            max-width: 1000px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+            border-radius: 4px;
+            border: 1px solid #ebeef5;
+            margin-top: 20px;
+            padding: 10px 0;
+        }
+
+        .jsons .title {
+            height: 40px;
+            line-height: 40px;
+            background: #d1d4d6;
+            border-radius: 2px;
+            border: 1px solid #9FA1A2;
+            max-width: 1000px;
+            cursor: pointer;
+        }
+
+        .title>.method {
+            width: 100px;
+            text-align: center;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 13px;
+            border-right: 1px solid #9FA1A2;
+            box-sizing: border-box;
+
+        }
+
+        .title>.apiurl {
+            width: calc(100% - 200px);
+            height: 100%;
+            box-sizing: border-box;
+            border: none;
+            padding: 0 0 0 12px;
+            background: #d1d4d6
+        }
+
+
+
+        .title>.apiurl:hover {
+            background: #E7E8E8
+        }
+
+        .title>.apiurl:focus {
+            background: #F4F4F4;
+            outline: none;
+        }
+
+        .title>.time {
+            width: 100px;
+            text-align: center;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 13px;
+            box-sizing: border-box;
+            border-left: 1px solid #9FA1A2;
+        }
+
+        .request_warper {}
+
+        .time_warper>.time_name,
+        .request_warper>.request_name,
+        .response_warper>.request_name {
+            display: inline-block;
+            margin: 3px 0;
+            border-bottom: 3px solid #F7670E;
+            padding: 5px 2px;
+        }
+
+        .time_warper>.time,
+        .request_warper>.request,
+        .response_warper>.response {
+            margin-left: 13px
+        }
+
+        #storage {}
+
+        #storage span {
+            text-align: center;
+            line-height: 20px;
+            padding: 2px 10px;
+            background-color: #ccc;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #fff;
+            display: inline-block;
+            position: relative;
+            margin-right: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        #storage span::after {
+            content: '×';
+            position: absolute;
+            top: -12px;
+            right: -8px;
+            width: 19px;
+            height: 19px;
+            background-color: #ccc;
+            border-radius: 50%;
+        }
+
+        .tag {
+            text-align: center;
+            line-height: 20px;
+            padding: 2px 10px;
+            background-color: #ccc;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #fff;
+            display: inline-block;
+            position: relative;
+            margin-right: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .connected {
+            width: 15px;
+            height: 15px;
+            background: gray;
+            display: inline-block;
+            border-radius: 50%;
+            -webkit-animation-name: breath;
+            /* 动画名称 */
+            -webkit-animation-duration: 2s;
+            /* 动画时长3秒 */
+            -webkit-animation-timing-function: ease-in-out;
+            /* 动画速度曲线：以低速开始和结束 */
+            -webkit-animation-iteration-count: infinite;
+            /* 播放次数：无限 */
+        }
+
+        @keyframes breath {
+            from {
+                opacity: 0.1;
+            }
+            /* 动画开始时的不透明度 */
+            50% {
+                opacity: 1;
+            }
+            /* 动画50% 时的不透明度 */
+            to {
+                opacity: 0.1;
+            }
+            /* 动画结束时的不透明度 */
+        }
+
+        @-webkit-keyframes breath {
+            from {
+                opacity: 0.1;
+            }
+            /* 动画开始时的不透明度 */
+            50% {
+                opacity: 1;
+            }
+            /* 动画50% 时的不透明度 */
+            to {
+                opacity: 0.1;
+            }
+            /* 动画结束时的不透明度 */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="notification sticky hide">
+        <p id="content"> </p>
+        <a class="close" href="javascript:">
+            <img src="/icon-close.png" />
+        </a>
+    </div>
+
+    <div class="wrapper">
+        <div>
+            <div style="display: flex">
+                <div style="margin-left: 30px;">
+                    <input id='apiurl' placeholder="" type="text" name="">
+                    <input id='change' class="el-button" type="button" name="" value="修改MID">
+                    <span class="connected"></span>
+                    <span class="tag" id="device_os"></span>
+                    <span class="tag" id="device_explore"></span>
+                    <br/>
+                    <br/>
+                    <div>
+                        <textarea id="command" class="el-textarea" placeholder="使用Ctrl+Enter快捷发送指令"></textarea>
+                        <!-- <input id='sendcommand' class="el-button" type="button" name="" value="发送指令"> -->
+                    </div>
+                    <br/>
+                    <br/>
+                    <input id="start" type="button" class="el-button" name="" value="暂停">
+                    <input id="clearall" type="button" class="el-button" name="" value="清空">
+                    <input type="button" class="el-button" name="" value="全部折叠" onclick="zhedie(this)">
+                    <input type="button" class="el-button" name="" value="移动端刷新" onclick="reloadMobilePage()">
+                </div>
+                <div style="border-left: 1px dashed #c7c7c7;border-left: 1px dashed #c7c7c7;padding-left: 10px;margin-left: 10px;max-width: 480px;">
+                    <div>
+                        <b>localStorage</b>
+                        <button class="el-button" id='storageClearAll'>一键清除</button>
+                    </div>
+                    <div id="storage">
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div id="json-renderer" style="margin-left: 30px;max-width: 1020px;">
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var apiurl = '';//监听地址
+        var status = 1;//是否开始
+        var projectId = 0;//项目id
+        var colors = ['#409EFF', '#67C23A', '#E6A23C', '#F56C6C', '#909399'];
+        projectId = getQueryStringByName('id');
+        $("input.project").eq(projectId).css('color', 'red');
+        html = '<div class="jsons" style="display:none"><div class="time_warper"><div class="time_name">time</div><div class="time"></div></div><div class="request_warper"><div class="request_name">log</div><div class="request"></div></div><div class="response_warper"><div class="request_name">trace</div><div class="response"></div></div></div>';
+        $('#json-renderer').prepend(html);
+        function show(jjj) {
+            try {
+                var input = eval('(' + jjj + ')');
+            }
+            catch (error) {
+                return;
+                //return alert("json解析失败: " + error);
+            }
+            console.log(input);
+
+            var options = {
+                collapsed: false,
+                withQuotes: true
+            };
+            if (status == 1 && input.msg) {
+                if (projectId == 0) {
+                    if (['log', 'error'].indexOf(input.level) > -1) {
+                        $(".jsons").eq(0).show();
+                        myDate = new Date();
+                        $('.time').eq(0).html(myDate.getHours() + ':' + myDate.getMinutes().toString().padStart(2, "0") + ':' + myDate.getSeconds().toString().padStart(2, "0"));
+                        $('.apiurl').eq(0).val(input.msg);
+                        $('.method').eq(0).html('post');
+                        $('.request').eq(0).html(input.msg);
+                        $('.response').eq(0).data('value', input.trace).jsonViewer(input.trace, options);
+                        if (input.level == 'error') {
+                            $(".jsons").eq(0).css('background', '#f3dbdb');
+                        }
+                        $('#json-renderer').prepend(html);
+                    } else if (input.level == 'localStorage') {
+                        $("#storage").empty();
+                        for (var key in input.msg) {
+                            color = colors[Math.floor(Math.random() * colors.length)]
+                            var span = $('<span>' + key + ':' + input.msg[key] + '</span>').css('backgroundColor', color).data('key', key)
+                            $("#storage").append(span);
+                        }
+                        if (JSON.stringify(input.msg) == "{}") {
+                            $("#storage").append('暂无localStorage');
+                        }
+                    } else if (input.level == 'deviceInfo') {
+                        $("#device_os").text(input.msg.os).show()
+                        $("#device_explore").text(input.msg.explore).show()
+                    } else if (input.level == 'MOPEN') {
+                        if (input.msg.MOPEN == true) {
+                            $('.connected').css('background', 'green');
+                        } else {
+                            $('.connected').css('background', 'gray');
+                        }
+                    }
+                }
+            }
+        }
+        // 解码  
+        function escape2Html(str) {
+            var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+            return str.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+        }
+        //get QueryString
+        function getQueryStringByName(name) {
+            var result = location.search.match(new RegExp("[\?\&]" + name + "=([^\&]+)", "i"));
+            if (result == null || result.length < 1) {
+                return 0;
+            }
+            return result[1];
+        }
+        var tmpInterval, ws;
+        var url = "ws://localhost:8888";
+        $(document).ready(function () {
+            new socket(url)
+        });
+        function socket(url) {
+            ws = new WebSocket(url);
+            ws.onopen = function () {
+                console.log("客户端已连接");
+                tmpInterval && clearTimeout(tmpInterval) && (tmpInterval = undefined)
+            };
+            ws.onmessage = function (evt) {
+                msg = evt.data;
+                console.log(msg);
+                show(msg);
+            };
+            ws.onclose = function () {
+                console.log("客户端已断开连接");
+                tmpInterval = setTimeout(function () {
+                    new socket(url)
+                }, 1000)
+            };
+            ws.onerror = function (evt) {
+                console.log("错误");
+            };
+        }
+    </script>
+    <script type="text/javascript">
+        $("#storage").on('click', 'span', function () {
+            var key = $(this).data('key');
+            sendCommand('localStorage.removeItem("' + key + '")');
+        })
+        $("#storageClearAll").click(function () {
+            sendCommand('localStorage.clear()');
+        })
+        $("#change").click(function () {
+            apiurl = $("#apiurl").val();
+            if (apiurl && ws.readyState == 1) {
+                ws.send(JSON.stringify({
+                    PID: apiurl
+                }))
+            }
+        })
+        function sendCommand(command) {
+            if (ws && ws.readyState == 1) {
+                var data = {
+                    order: command,
+                    PID: $("#apiurl").val()
+                };
+                ws.send(JSON.stringify(data))
+            } else {
+                alert('socket连接失败')
+            }
+        }
+        $("#sendcommand").click(function () {
+            sendCommand($("#command").val())
+        })
+        $("#command").on('keypress', function (event) {
+            if (event.keyCode == "10" && window.event.ctrlKey) {
+                sendCommand($(this).val())
+            }
+        })
+        $("#apiurl").on('keypress', function (event) {
+            var apiurl = $(this).val()
+            if (event.keyCode == "13") {
+                if (apiurl && ws.readyState == 1) {
+                    ws.send(JSON.stringify({
+                        PID: apiurl
+                    }))
+                }
+            }
+        })
+        $("#start").click(function () {
+            if (status == 1) {
+                status = 0;
+                $("#start").val('开始');
+            } else {
+                status = 1;
+                $("#start").val('暂停');
+            }
+        })
+        $("#clearall").click(function () {
+            $('#json-renderer').empty().prepend(html);
+        })
+        function collapsed() {
+            $('.jsons:not(:first)').each(function () {
+                var ele2 = $(this).find('.response');
+                var isCollapsed = true;
+                let options = {
+                    collapsed: isCollapsed,
+                    withQuotes: true
+                };
+                ele2.data('collapsed', isCollapsed).jsonViewer(ele2.data('value'), options);
+            })
+        }
+        function uncollapsed() {
+            $('.jsons:not(:first)').each(function () {
+                var ele2 = $(this).find('.response');
+                var isCollapsed = false;
+                let options = {
+                    collapsed: isCollapsed,
+                    withQuotes: true
+                };
+                ele2.data('collapsed', isCollapsed).jsonViewer(ele2.data('value'), options);
+            })
+        }
+        function zhedie(ele) {
+            if ($(ele).val() == '全部折叠') {
+                collapsed();
+                $(ele).val('全部打开')
+            } else {
+                uncollapsed();
+                $(ele).val('全部折叠')
+            }
+        }
+        function reloadMobilePage() {
+            console.log('shuaxin');
+
+            sendCommand('location.reload(true)');
+        }
+    </script>
+    <div id="footer">
+        <center id="online_box"></center>
+    </div>
+</body>
+
+</html>
