@@ -31,23 +31,31 @@
   ![](http://mobile.liuning.xyz/images/command_pc.png)
   ![](http://mobile.liuning.xyz/images/command_mobile.png)
 
-####使用方法
-1. ```npm install nodejs-websocket```
-2. ```
+#### 使用方法
+1. 
+  ```npm install 
+  nodejs-websocket```
+  ```
+2. 
+  ```
   cd mobileDebug
   node index.js
   ```
-3. ```
-  根据情况设置以下两个参数：
-  window.socketurl = "自己的socket地址"
-  window.delaytime = "延迟时间" //延迟时间保证刚加载的报错和日志保存到内存中，默认1s，可根据情况调整。
-  页面引入mobile.debug.js
+
+3. 
+   ```
+   根据情况设置以下两个参数：
+   window.socketurl = "自己的socket地址"
+   window.delaytime = "延迟时间" //延迟时间保证刚加载的报错和日志保存到内存中，默认1s，可根据情况调整。
+   页面引入mobile.debug.js
+   ```
+
+4. 
   ```
-4. ```
-	设置PC端socket地址。
-	/nodepush/index.html:378附近
-	```
+  设置PC端socket地址。
+  /nodepush/index.html:378附近
+  ```
 ####可能出现的问题
 - node index.js后服务已开启，但移动端不能连接
-	1. 查看防火墙
-	2. 查看js路径
+  1. 查看防火墙
+  2. 查看js路径
