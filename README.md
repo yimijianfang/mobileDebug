@@ -1,5 +1,9 @@
 ## 移动端调试工具
 
+#### 测试地址
+PC调试端 [http://mobile.liuning.xyz/nodepush/](http://mobile.liuning.xyz/nodepush/)
+移动端  [http://mobile.liuning.xyz/demo](http://mobile.liuning.xyz/demo)
+
 #### 已完成
 
 - [x] 单点调试
@@ -34,7 +38,7 @@
 #### 使用方法
 1. 
   ```npm install 
-  nodejs-websocket```
+  nodejs-websocket
   ```
 2. 
   ```
@@ -55,7 +59,7 @@
   设置PC端socket地址。
   /nodepush/index.html:378附近
   ```
-####可能出现的问题
+#### 可能出现的问题
 - node index.js后服务已开启，但移动端不能连接
   1. 查看防火墙
   2. 查看js路径
